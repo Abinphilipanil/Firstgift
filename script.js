@@ -4,7 +4,7 @@
 
 // Set your passcode here.
 // Tip: Use something only you two understand.
-const PASSCODE = "Abhi@123";
+const PASSCODE = "12345678";
 
 // Optional: set display name shown on the site (not her real name if you want).
 const DISPLAY_NAME = "My Favorite Person";
@@ -293,3 +293,4 @@ renderFinal();
 
 if (isUnlocked()) showApp();
 else showGate();
+
