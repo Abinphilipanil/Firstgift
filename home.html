@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Memories</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg">
+
+  <header class="topbar">
+  <div class="wrap topbar-inner">
+    <div>
+      <div class="kicker">a small archive</div>
+      <h1 class="page-title" id="displayName">For someone important</h1>
+    </div>
+
+    <div class="actions">
+      <button id="fxToggle" class="btn ghost" type="button">Effects: Off</button>
+      <button id="logout" class="btn" type="button">Lock</button>
+    </div>
+  </div>
+
+  <!-- ✅ Gooey Nav -->
+  <div class="wrap">
+    <div class="gooey-nav-container" id="gooeyNav">
+      <nav>
+        <ul id="gooeyNavList">
+          <li class="active"><a href="#memories">Memories</a></li>
+          <li><a href="#songsSection">Songs</a></li>
+          <li><a href="#letter">Letter</a></li>
+          <li><a href="#reply">Reply</a></li>
+        </ul>
+      </nav>
+      <span class="effect filter" id="gooeyFilter"></span>
+      <span class="effect text" id="gooeyText"></span>
+    </div>
+  </div>
+</header>
+
+
+  <main class="wrap">
+
+    <!-- Memories: BounceCards -->
+    <section class="section" id ="memories">
+      <div class="section-head">
+        <h2 class="h2">Memory cards</h2>
+        <p class="muted">Tap a photo to open the memory.</p>
+      </div>
+
+      <div class="bounce-wrap">
+        <div id="bounceCards" class="bounceCardsContainer"></div>
+      </div>
+      <p class="muted small bounce-note">Tip: square images look best.</p>
+    </section>
+
+    <!-- Songs: Carousel -->
+    <section class="section" id="songsSection">
+      <div class="section-head">
+        <h2 class="h2">Songs</h2>
+        <p class="muted">A few tracks. Click any card to open Spotify.</p>
+      </div>
+
+      <div class="songs-shell">
+        <div class="songs-carousel" id="songsCarousel" aria-label="Songs carousel">
+          <div class="songs-track" id="songsTrack"></div>
+        </div>
+
+        <div class="songs-controls">
+          <button id="songsPrev" class="btn" type="button">Prev</button>
+          <button id="songsNext" class="btn" type="button">Next</button>
+
+          <div class="songs-toggle">
+            <label class="muted small" style="display:flex; gap:10px; align-items:center;">
+              <input id="songsAutoplay" type="checkbox" checked />
+              Autoplay
+            </label>
+          </div>
+        </div>
+
+        <div class="songs-dots" id="songsDots"></div>
+      </div>
+    </section>
+
+    <!-- Letter -->
+   <section class="section" id="letter">
+      <div class="section-head">
+        <h2 class="h2">A letter</h2>
+        <p class="muted">Tap to open. Calm and readable.</p>
+      </div>
+
+      <div class="letter-stage">
+        <button id="openLetter" class="letter" type="button" aria-label="Open letter">
+          <div class="envelope">
+            <div class="env-back"></div>
+            <div class="env-flap"></div>
+            <div class="env-front"></div>
+            <div class="paper">
+              <div class="paper-inner">
+                <div class="paper-title" id="letterTitle">A small note</div>
+                <div class="paper-text" id="letterText">Replace this with your letter.</div>
+              </div>
+            </div>
+          </div>
+          <div class="letter-hint">Tap to open</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Gratitude -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="h2">Gratitude</h2>
+        <p class="muted">Short, specific, true things.</p>
+      </div>
+      <div id="gratitude" class="gratitude-grid"></div>
+    </section>
+
+    <!-- Reply -->
+    <section class="section" id="reply">
+      <div class="section-head">
+        <h2 class="h2">Reply</h2>
+        <p class="muted">Write something back. Save/copy/download.</p>
+      </div>
+
+      <div class="panel">
+        <form id="replyForm" class="stack">
+          <label class="label" for="replyText">Your message</label>
+          <textarea id="replyText" class="textarea" rows="5" placeholder="Type here..."></textarea>
+
+          <div class="row">
+            <button class="btn primary" type="submit">Save reply</button>
+            <button id="copyReply" class="btn" type="button">Copy</button>
+            <button id="downloadReply" class="btn ghost" type="button">Download .txt</button>
+          </div>
+
+          <p id="replyStatus" class="muted small" aria-live="polite"></p>
+        </form>
+
+        <div class="divider"></div>
+
+        <div>
+          <div class="label">Saved replies on this device</div>
+          <div id="replyList" class="reply-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer muted small">
+      Built with care — minimal and yours.
+    </footer>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" id="modalBg"></div>
+    <article class="modal-card" role="document">
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <img id="modalImg" class="modal-img" alt="" />
+      <div class="modal-body">
+        <div id="modalMeta" class="muted small"></div>
+        <h3 id="modalTitle" class="h3"></h3>
+        <p id="modalText" class="modal-text"></p>
+      </div>
+    </article>
+  </div>
+
+  <!-- Falling effects layer -->
+  <div id="fxLayer" class="fx-layer hidden" aria-hidden="true"></div>
+
+  <!-- GSAP for BounceCards -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

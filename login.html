@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Private Access</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Matter.js must load BEFORE login.js -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <script defer src="login.js"></script>
+</head>
+
+<body class="bg login-body">
+
+  <!-- Falling background (click to collapse) -->
+  <div id="fallingBg" class="falling-bg" aria-hidden="true">
+    <div id="fallingText" class="falling-text-target"></div>
+    <div id="fallingCanvas" class="falling-text-canvas"></div>
+  </div>
+
+  <!-- Login panel stays above -->
+  <main class="center login-top">
+    <section class="panel panel-glass login-panel">
+      <div class="badge">For a friend</div>
+      <p class="muted">Enter your secretname to continue.</p>
+
+      <form id="loginForm" class="stack" autocomplete="off">
+        <label class="label" for="pass">Passcode</label>
+
+        <div class="field-row">
+          <input id="pass" class="input" type="password" placeholder="••••••" required />
+          <button id="togglePass" class="btn ghost" type="button" aria-label="Show passcode">Show</button>
+        </div>
+
+        <button class="btn primary" type="submit">Enter</button>
+        <p id="msg" class="error" aria-live="polite"></p>
+      </form>
+     
+
+    </section>
+  </main>
+
+</body>
+</html>
