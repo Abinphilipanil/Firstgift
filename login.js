@@ -38,7 +38,7 @@ if (loginForm && passInput && msg) {
 
     if (enteredHash === savedHash) {
       localStorage.setItem(SESSION_KEY, "true");
-      window.location.href = "home.html";
+      window.location.href = "index.html";
     } else {
       msg.textContent = "Incorrect passcode.";
     }
@@ -294,3 +294,4 @@ if (loginForm && passInput && msg) {
     renderWords();
   });
 })();
+
