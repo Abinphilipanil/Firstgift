@@ -1,13 +1,16 @@
-// login.js
-const PASS_HASH_KEY = "memsite_pass_hash";
+// ===== Fixed Passcode Configuration =====
 const SESSION_KEY = "memsite_session_ok";
 
-// ===== Login logic =====
+// SHA-256 hash of: 12345678
+const FIXED_PASS_HASH = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f";
+
+// ===== Login Elements =====
 const loginForm = document.getElementById("loginForm");
 const passInput = document.getElementById("pass");
 const msg = document.getElementById("msg");
 const toggleBtn = document.getElementById("togglePass");
 
+// ===== Toggle Show/Hide =====
 if (toggleBtn && passInput) {
   toggleBtn.addEventListener("click", () => {
     const isHidden = passInput.type === "password";
@@ -16,27 +19,31 @@ if (toggleBtn && passInput) {
   });
 }
 
+// ===== SHA-256 Helper =====
 async function sha256(text) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest("SHA-256", enc);
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  return [...new Uint8Array(buf)]
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
+// ===== Login Logic =====
 if (loginForm && passInput && msg) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     msg.textContent = "";
 
-    const savedHash = localStorage.getItem(PASS_HASH_KEY);
-    if (!savedHash) {
-      msg.textContent = "Passcode not found on this device.";
+    const entered = passInput.value.trim();
+
+    if (!entered) {
+      msg.textContent = "Please enter the passcode.";
       return;
     }
 
-    const entered = passInput.value.trim();
     const enteredHash = await sha256(entered);
 
-    if (enteredHash === savedHash) {
+    if (enteredHash === FIXED_PASS_HASH) {
       localStorage.setItem(SESSION_KEY, "true");
       window.location.href = "index.html";
     } else {
@@ -45,26 +52,35 @@ if (loginForm && passInput && msg) {
   });
 }
 
+/* =========================================================
+   Falling Text Background (Matter.js) + Typewriter Quote
+========================================================= */
 
-// ===== Falling Text Background (Matter.js) + Typewriter Quote =====
 (function FallingTextBg() {
   const bg = document.getElementById("fallingBg");
   const textHost = document.getElementById("fallingText");
   const canvasHost = document.getElementById("fallingCanvas");
   if (!bg || !textHost || !canvasHost) return;
 
-  // ✅ Quote shown top-left (typewriter)
-  const QUOTE_TEXT = "“Hey friend, keep the secret. Stay soft. Stay safe.This is just between us. I’m saying this to you as a friend and offering it as a small, honest gift. There’s nothing you need to prove here and nothing you need to explain. Keep the secret—it’s safe in your hands and safe in this space. Be gentle with your heart, especially on the days when the world feels heavier than it should. It’s okay to slow down, to rest, and to feel things deeply. Stay soft, because that softness is not a weakness—it’s the part of you that makes you real and kind. And stay safe. Take care of yourself in the quiet moments, the unseen ones. Even when nothing is said out loud, know that you’re thought of, you’re valued, and you’re never as alone as you might feel.””";
+  const QUOTE_TEXT = `“Hey friend, keep the secret. Stay soft. Stay safe.
+This is just between us. I’m saying this to you as a friend and offering it as a small, honest gift.
+There’s nothing you need to prove here and nothing you need to explain.
+Keep the secret—it’s safe in your hands and safe in this space.
+Be gentle with your heart, especially on the days when the world feels heavier than it should.
+It’s okay to slow down, to rest, and to feel things deeply.
+Stay soft, because that softness is not a weakness—it’s the part of you that makes you real and kind.
+And stay safe. Take care of yourself in the quiet moments, the unseen ones.
+Even when nothing is said out loud, know that you’re thought of, you’re valued,
+and you’re never as alone as you might feel.”`;
+
   const QUOTE_AUTHOR = "— 'A' Frnd";
 
-  // ✅ Background falling text (physics words)
-  const TEXT = "Don't break the secret . softness . friendship ."
-  const HIGHLIGHT =["secret","softness","friendship"];
+  const TEXT = "Don't break the secret . softness . friendship .";
+
   let started = false;
   let engine, render, runner;
   let wordBodies = [];
 
-  // ---------- Inject quote UI + CSS ----------
   function ensureQuoteUI() {
     let quoteBox = document.getElementById("quoteBox");
     if (!quoteBox) {
@@ -129,12 +145,10 @@ if (loginForm && passInput && msg) {
     const authorEl = document.getElementById("quoteAuthor");
     if (!quoteTextEl || !authorEl) return;
 
-    // Reset
     quoteTextEl.textContent = "";
     authorEl.style.display = "none";
     authorEl.textContent = QUOTE_AUTHOR;
 
-    // caret
     const caret = document.createElement("span");
     caret.className = "caret";
     caret.setAttribute("aria-hidden", "true");
@@ -143,7 +157,7 @@ if (loginForm && passInput && msg) {
     const speed = 35;
 
     const timer = setInterval(() => {
-      i += 1;
+      i++;
       quoteTextEl.textContent = QUOTE_TEXT.slice(0, i);
       quoteTextEl.appendChild(caret);
 
@@ -156,7 +170,6 @@ if (loginForm && passInput && msg) {
     }, speed);
   }
 
-  // ---------- Falling words rendering ----------
   function renderWords() {
     const words = TEXT.split(" ");
     textHost.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(" ");
@@ -176,39 +189,21 @@ if (loginForm && passInput && msg) {
         Matter.Engine.clear(engine);
       }
     } catch {}
-    engine = null; render = null; runner = null;
+    engine = null;
+    render = null;
+    runner = null;
     wordBodies = [];
   }
 
-  function fallbackDrop() {
-    const spans = [...textHost.querySelectorAll(".word")];
-    spans.forEach((el, i) => {
-      el.style.position = "absolute";
-      el.style.left = (20 + Math.random() * 60) + "vw";
-      el.style.top = (20 + Math.random() * 30) + "vh";
-      el.style.transition = "transform 1200ms cubic-bezier(.2,.8,.2,1), opacity 1200ms ease";
-      el.style.transform = `translate(-50%,-50%) rotate(${(Math.random()-0.5)*40}deg)`;
-      setTimeout(() => {
-        el.style.opacity = "0";
-        el.style.transform = `translate(-50%, 140vh) rotate(${(Math.random()-0.5)*220}deg)`;
-      }, 20 + i * 18);
-    });
-  }
-
   function startPhysics() {
-    if (started) return;
+    if (started || !window.Matter) return;
     started = true;
-
-    if (!window.Matter) {
-      fallbackDrop();
-      return;
-    }
 
     const { Engine, Render, World, Bodies, Runner, Mouse, MouseConstraint, Body } = Matter;
 
     const rect = bg.getBoundingClientRect();
-    const width = Math.max(1, rect.width);
-    const height = Math.max(1, rect.height);
+    const width = rect.width;
+    const height = rect.height;
 
     engine = Engine.create();
     engine.world.gravity.y = 1.05;
@@ -219,28 +214,22 @@ if (loginForm && passInput && msg) {
       options: { width, height, background: "transparent", wireframes: false }
     });
 
-    const wallOpts = { isStatic: true, render: { visible: false } };
-    const floor = Bodies.rectangle(width / 2, height + 30, width + 240, 60, wallOpts);
-    const left = Bodies.rectangle(-30, height / 2, 60, height + 240, wallOpts);
-    const right = Bodies.rectangle(width + 30, height / 2, 60, height + 240, wallOpts);
+    const floor = Bodies.rectangle(width / 2, height + 30, width + 240, 60, { isStatic: true });
+    const left = Bodies.rectangle(-30, height / 2, 60, height + 240, { isStatic: true });
+    const right = Bodies.rectangle(width + 30, height / 2, 60, height + 240, { isStatic: true });
 
-    const containerRect = bg.getBoundingClientRect();
     const spans = [...textHost.querySelectorAll(".word")];
+    const containerRect = bg.getBoundingClientRect();
 
-    wordBodies = spans.map((el) => {
+    wordBodies = spans.map(el => {
       const r = el.getBoundingClientRect();
       const x = r.left - containerRect.left + r.width / 2;
       const y = r.top - containerRect.top + r.height / 2;
 
       const body = Bodies.rectangle(x, y, r.width + 10, r.height + 8, {
-        restitution: 0.72,
-        frictionAir: 0.018,
-        friction: 0.15,
-        render: { visible: false }
+        restitution: 0.7,
+        frictionAir: 0.02
       });
-
-      Body.setVelocity(body, { x: (Math.random() - 0.5) * 4, y: -0.5 });
-      Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.06);
 
       el.style.position = "absolute";
       el.style.left = `${x}px`;
@@ -250,15 +239,11 @@ if (loginForm && passInput && msg) {
       return { el, body };
     });
 
-    textHost.style.display = "block";
-    textHost.style.placeItems = "unset";
-
     const mouse = Mouse.create(bg);
     const mc = MouseConstraint.create(engine, {
       mouse,
-      constraint: { stiffness: 0.2, render: { visible: false } }
+      constraint: { stiffness: 0.2 }
     });
-    render.mouse = mouse;
 
     World.add(engine.world, [floor, left, right, mc, ...wordBodies.map(w => w.body)]);
 
@@ -278,12 +263,11 @@ if (loginForm && passInput && msg) {
     tick();
   }
 
-  // init
   renderWords();
-  startTypewriter(); // starts immediately
+  startTypewriter();
 
   document.addEventListener("click", (e) => {
-    if (e.target && e.target.closest && e.target.closest(".login-panel")) return;
+    if (e.target.closest(".login-panel")) return;
     startPhysics();
   });
 
@@ -294,4 +278,3 @@ if (loginForm && passInput && msg) {
     renderWords();
   });
 })();
-
