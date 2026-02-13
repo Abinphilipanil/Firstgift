@@ -1,54 +1,17 @@
-// ===== Fixed Passcode Configuration =====
+// ===== Simple Enter Button Configuration =====
 const SESSION_KEY = "memsite_session_ok";
 
-// SHA-256 hash of: 12345678
-const FIXED_PASS_HASH = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f";
-
-// ===== Login Elements =====
 const loginForm = document.getElementById("loginForm");
-const passInput = document.getElementById("pass");
-const msg = document.getElementById("msg");
-const toggleBtn = document.getElementById("togglePass");
 
-// ===== Toggle Show/Hide =====
-if (toggleBtn && passInput) {
-  toggleBtn.addEventListener("click", () => {
-    const isHidden = passInput.type === "password";
-    passInput.type = isHidden ? "text" : "password";
-    toggleBtn.textContent = isHidden ? "Hide" : "Show";
-  });
-}
-
-// ===== SHA-256 Helper =====
-async function sha256(text) {
-  const enc = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest("SHA-256", enc);
-  return [...new Uint8Array(buf)]
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-// ===== Login Logic =====
-if (loginForm && passInput && msg) {
-  loginForm.addEventListener("submit", async (e) => {
+if (loginForm) {
+  loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    msg.textContent = "";
 
-    const entered = passInput.value.trim();
+    // mark "session ok"
+    localStorage.setItem(SESSION_KEY, "true");
 
-    if (!entered) {
-      msg.textContent = "Please enter the passcode.";
-      return;
-    }
-
-    const enteredHash = await sha256(entered);
-
-    if (enteredHash === FIXED_PASS_HASH) {
-      localStorage.setItem(SESSION_KEY, "true");
-      window.location.href = "index.html";
-    } else {
-      msg.textContent = "Incorrect passcode.";
-    }
+    // ✅ IMPORTANT: change this to your real next page if needed (e.g., home.html)
+    window.location.href = "index.html";
   });
 }
 
@@ -199,7 +162,7 @@ and you’re never as alone as you might feel.”`;
     if (started || !window.Matter) return;
     started = true;
 
-    const { Engine, Render, World, Bodies, Runner, Mouse, MouseConstraint, Body } = Matter;
+    const { Engine, Render, World, Bodies, Runner, Mouse, MouseConstraint } = Matter;
 
     const rect = bg.getBoundingClientRect();
     const width = rect.width;
@@ -242,7 +205,7 @@ and you’re never as alone as you might feel.”`;
     const mouse = Mouse.create(bg);
     const mc = MouseConstraint.create(engine, {
       mouse,
-      constraint: { stiffness: 0.2 }
+      constraint: { stiffness: 0.2, render: { visible: false } }
     });
 
     World.add(engine.world, [floor, left, right, mc, ...wordBodies.map(w => w.body)]);
